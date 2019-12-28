@@ -17,6 +17,7 @@
     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
     <PackageId>Cobra.RenamePlugin</PackageId>
     <Product>Cobra.RenamePlugin</Product>
+    <AssemblyVersion>1.0.0.2</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(OS)' == 'Windows_NT' OR '$(ASFNetFramework)' != ''">
