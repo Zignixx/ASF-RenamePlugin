@@ -1,7 +1,7 @@
 # ASF Rename Plugin
 
 ## Installation
-- download the .zip file from [latest release](https://github.com/Zignixx/RenamePlugin/releases/latest)
+- download the .zip file from [latest release](https://github.com/Zignixx/ASF-RenamePlugin/releases/latest)
 - unpack the file into the ASF plugins folder
 - restart ASF
 
