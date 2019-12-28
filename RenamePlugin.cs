@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Composition;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ArchiSteamFarm.Json;
 using ArchiSteamFarm.Plugins;
@@ -16,43 +17,27 @@ namespace ArchiSteamFarm.Cobra.RenamePlugin {
 			switch (args[0].ToUpperInvariant()) {
 				case "RENAME" when bot.HasPermission(steamID, BotConfig.EPermission.Master):
 					int args_length = args.Length;
-					string response = "";
-					bool rename = false;
-					if(args_length < 2) {
-						Random rnd_help = new Random();
-
-						response = $"!rename New Bot Name\n\nWorks with spaces!\n\nVariables to use:\n\n%RANDOM1% to $RANDOM4% => generate a random number\n!rename Bot $RANDOM4% => Bot {rnd_help.Next(1000,9999)}\n\n%BOTNAME% => ASF internal bot name\n!rename Bot %BOTNAME% => Bot {bot.BotName}";
-					} else {
-						for(int i = 1;i < args_length;i++) {
-							rename = true;
-
-							if (args[i].Contains("%RANDOM1%")) {
-								Random rnd = new Random();
-								response = response + args[i].Replace("%RANDOM1%","") + rnd.Next(0,9) + " ";
-							} else if (args[i].Contains("%RANDOM2%")) {
-								Random rnd = new Random();
-								response = response + args[i].Replace("%RANDOM2%", "") + rnd.Next(10, 99) + " ";
-							} else if (args[i].Contains("%RANDOM3%")) {
-								Random rnd = new Random();
-								response = response + args[i].Replace("%RANDOM3%", "") + rnd.Next(100, 999) + " ";
-							} else if (args[i].Contains("%RANDOM4%")) {
-								Random rnd = new Random();
-								response = response + args[i].Replace("%RANDOM4%", "") + rnd.Next(1000, 9999) + " ";
-							} else if (args[i].Contains("%BOTNAME%")) {
-								Random rnd = new Random();
-								response = response + args[i].Replace("%BOTNAME%", "") + bot.BotName + " ";
-							} else {
-								response = response + args[i] + " ";
-							}
+					if (args_length < 2) {
+						return $"!rename New Bot Name\n\nWorks with spaces!\n\nVariables to use:\n\n%RANDOM1% to $RANDOM9% => generate a random number\n!rename Bot $RANDOM4% => Bot 7643\n\n%BOTNAME% => ASF internal bot name\n!rename Bot %BOTNAME% => Bot {bot.BotName}";
+					}
+					string user_arguments = Utilities.GetArgsAsText(args,1," ");
+					Regex regex_random = new Regex(@"%RANDOM(\d+)%");
+					Match match = regex_random.Match(user_arguments);
+					if (match.Success) {
+						int maxrange_userinput = int.Parse(match.Groups[1].Value);
+						if(maxrange_userinput > 9) {
+							return "Sorry but you can't use a random number with more than 9 digits!";
 						}
+						int maxrange = int.Parse(new string('9', maxrange_userinput));
+						Random rnd = new Random();
+						int randomnumber = rnd.Next(0, maxrange);
+						user_arguments = Regex.Replace(user_arguments, @"%RANDOM(\d+)%", randomnumber.ToString($"D{maxrange_userinput}"));
 					}
-					if(rename) {
-						response = response.Remove(response.Length - 1);
-						await bot.Commands.Response(steamID, $"nickname {bot.BotName} {response}").ConfigureAwait(false);
-						return $"Changed my name to: {response}";
-					} else {
-						return response;
+					if(new Regex("%BOTNAME%").Match(user_arguments).Success) { 
+						user_arguments = Regex.Replace(user_arguments, @"%BOTNAME%", bot.BotName);
 					}
+					await bot.Commands.Response(steamID, $"nickname {bot.BotName} {user_arguments}").ConfigureAwait(false);
+					return $"Changed my name to: {user_arguments}";
 				default:
 					return null;
 			}

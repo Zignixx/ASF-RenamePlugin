@@ -11,5 +11,5 @@
 - It will work with spaces!
 
 ## Placeholders
-- %RANDOM1% to %RANDOM4% => use a random int number. Example: !rename Bot %RANDOM4% => Bot 4982
+- %RANDOM1% to %RANDOM9% => use a random int number. Example: !rename Bot %RANDOM4% => Bot 4982
 - %BOTNAME% => use the ASF internal bot name. Example !rename Bot %BOTNAME% => Bot asfbot1
